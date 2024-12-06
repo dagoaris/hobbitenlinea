@@ -1,47 +1,19 @@
 // Configuración de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyCvFBXaVgcPk-iPaQ3TKIgACdUVZdWvWIQ",
-    authDomain: "datahobbit-aff97.firebaseapp.com",
-    projectId: "datahobbit-aff97",
-    storageBucket: "datahobbit-aff97.firebasestorage.app",
-    messagingSenderId: "452563551077",
-    appId: "1:452563551077:web:d1351a428fd6b1c2ebd78c"
+  apiKey: "AIzaSyCvFBXaVgcPk-iPaQ3TKIgACdUVZdWvWIQ",
+  authDomain: "datahobbit-aff97.firebaseapp.com",
+  projectId: "datahobbit-aff97",
+  storageBucket: "datahobbit-aff97.firebasestorage.app",
+  messagingSenderId: "452563551077",
+  appId: "1:452563551077:web:0cc2e7612b9c0b9bebd78c"
 };
 
-// Inicializa Firebase
+// Inicializar Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(app);
 
-// Referencia al formulario y tabla de productos
-const formProducto = document.getElementById('form-producto');
-const tablaInventario = document.getElementById('tabla-inventario').getElementsByTagName('tbody')[0];
-
-// Cargar productos desde Firestore
-function cargarInventario() {
-    db.collection("inventario").get().then(querySnapshot => {
-        tablaInventario.innerHTML = ''; // Limpiar tabla
-        querySnapshot.forEach(doc => {
-            const producto = doc.data();
-            const row = tablaInventario.insertRow();
-            row.innerHTML = `
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.cantidad}</td>
-                <td>
-                    <button class="eliminar" data-id="${doc.id}">Eliminar</button>
-                </td>
-            `;
-        });
-
-        // Agregar eventos para eliminar productos
-        document.querySelectorAll('.eliminar').forEach(button => {
-            button.addEventListener('click', eliminarProducto);
-        });
-    });
-}
-
-// Función para agregar un producto
-formProducto.addEventListener('submit', function(e) {
+// Función para agregar producto al inventario en Firestore
+document.getElementById('form-producto').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const nombre = document.getElementById('nombre').value.trim();
@@ -52,27 +24,36 @@ formProducto.addEventListener('submit', function(e) {
         return;
     }
 
-    // Agregar producto a Firestore
-    db.collection("inventario").add({
+    // Agregar el producto a Firestore
+    db.collection("productos").add({
         nombre: nombre,
-        cantidad: cantidad
+        cantidad: cantidad,
+        fecha: new Date()
     }).then(() => {
-        cargarInventario(); // Recargar inventario
-        formProducto.reset(); // Limpiar formulario
+        alert('Producto agregado correctamente.');
+        cargarInventario();
     }).catch(error => {
-        console.error("Error agregando el producto: ", error);
+        console.error("Error agregando producto: ", error);
+        alert('Ocurrió un error al agregar el producto.');
     });
 });
 
-// Función para eliminar un producto
-function eliminarProducto(e) {
-    const id = e.target.getAttribute('data-id');
-    db.collection("inventario").doc(id).delete().then(() => {
-        cargarInventario(); // Recargar inventario
+// Función para cargar el inventario desde Firestore
+function cargarInventario() {
+    const productosList = document.getElementById('productos-list');
+    productosList.innerHTML = '';
+
+    db.collection("productos").get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const producto = doc.data();
+            const productoDiv = document.createElement('div');
+            productoDiv.textContent = `Nombre: ${producto.nombre} | Cantidad: ${producto.cantidad}`;
+            productosList.appendChild(productoDiv);
+        });
     }).catch(error => {
-        console.error("Error eliminando el producto: ", error);
+        console.error("Error cargando inventario: ", error);
     });
 }
 
-// Cargar inventario al inicio
+// Cargar el inventario al cargar la página
 window.onload = cargarInventario;
