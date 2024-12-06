@@ -6,42 +6,42 @@
     <title>Gestión Inventario Hobbit</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Librería para escanear QR Codes -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <!-- Enlace a tu hoja de estilos -->
     <link rel="stylesheet" href="index.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Gestión Inventario Hobbit</h1>
 
     <!-- Buscador de productos -->
     <div id="search-container">
-        <input type="text" id="search-input" placeholder="Buscar productos..." />
+        <input type="text" id="search-input" placeholder="Buscar Producto por Nombre o ID..." onkeyup="buscarProducto()">
     </div>
 
     <!-- Formulario para agregar productos -->
     <form id="form-producto">
-        <input type="text" id="nombre" placeholder="Nombre del producto" required />
-        <input type="number" id="cantidad" placeholder="Cantidad" required />
+        <input type="text" id="nombre" placeholder="Nombre del Producto" required>
+        <input type="number" id="cantidad" placeholder="Cantidad" required>
         <button type="submit">Agregar Producto</button>
     </form>
 
-    <!-- Tabla de inventario -->
+    <!-- Tabla para mostrar productos -->
     <table id="tabla-inventario">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Cantidad</th>
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Los productos se cargarán aquí desde Firestore -->
+        <tbody id="productos-lista">
+            <!-- Aquí se cargarán los productos -->
         </tbody>
     </table>
 
-    <!-- Enlace al archivo JavaScript -->
+    <!-- Conexión a Firebase y Firestore -->
     <script src="index.js"></script>
 </body>
 </html>
